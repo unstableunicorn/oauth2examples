@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
 
@@ -19,7 +19,7 @@ jobs:
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.15
+        go-version: ^1.16
       id: go
 
     - name: Check out code into the Go module directory
@@ -30,7 +30,6 @@ jobs:
 
     - name: Build Static
       run: |
-          export PATH=$PATH:$(go env GOPATH)/bin # temporary fix. See https://github.com/actions/setup-go/issues/14
           go get -u golang.org/x/lint/golint
           make static
 
@@ -39,21 +38,24 @@ jobs:
     
     - name: Build All
       run: make build
+
+    - name: Show Files
+      run: tree .
     
     - name: Upload Linux
       uses: actions/upload-artifact@v2
       with:
         name: bin-linux
-        path: bin/cogo-linux*
+        path: cli/bin/spak-linux*
 
     - name: Upload Darwin
       uses: actions/upload-artifact@v2
       with:
         name: bin-darwin
-        path: bin/cogo-darwin*
+        path: cli/bin/spak-darwin*
 
     - name: Upload Windows
       uses: actions/upload-artifact@v2
       with:
         name: bin-windows
-        path: bin/cogo-windows*
+        path: cli/bin/spak-windows*

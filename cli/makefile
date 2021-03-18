@@ -9,12 +9,12 @@ GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/)
 all: run
 
 buildlocal: 
-	go build -i -v -o bin/${OUT} -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
+	go build -v -o bin/${OUT} -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
 
 build: static
-	GOOS=darwin GOARCH=amd64 go build -i -v -o bin/${OUT}-darwin-amd64 -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
-	GOOS=linux GOARCH=amd64 go build -i -v -o bin/${OUT}-linux-amd64 -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
-	GOOS=windows GOARCH=amd64 go build -i -v -o bin/${OUT}-windows-amd64 -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
+	GOOS=darwin GOARCH=amd64 go build -v -o bin/${OUT}-darwin-amd64 -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
+	GOOS=linux GOARCH=amd64 go build -v -o bin/${OUT}-linux-amd64 -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
+	GOOS=windows GOARCH=amd64 go build -v -o bin/${OUT}-windows-amd64 -ldflags="-X ${VERSION_PATH}=${VERSION}" ${PKG}
 
 test:
 	@go test -short ${PKG_LIST}
@@ -31,7 +31,7 @@ lint:
 	done
 
 static: vet lint
-	go build -i -v -o bin/${OUT}-v${VERSION} -tags netgo -ldflags="-extldflags \"-static\" -w -s -X cmd.version=${VERSION}" ${PKG}
+	go build -v -o bin/${OUT}-v${VERSION} -tags netgo -ldflags="-extldflags \"-static\" -w -s -X cmd.version=${VERSION}" ${PKG}
 
 run: buildlocal
 	./${OUT}
