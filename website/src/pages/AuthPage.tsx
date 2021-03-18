@@ -59,12 +59,13 @@ const AuthPage = () => {
       <header className="App-header">
         {auth?.authorised &&
           <div>
-            <p>
+            <h2>
               Hi {auth.name}, you are now Authorised!
-            </p>
-            <ul>
-              {getDetailsList()}
-            </ul>
+            </h2>
+              <h3>User Details: </h3>
+              <ul>
+                {getDetailsList()}
+              </ul>
             <p>
               You can now close this page!
             </p>
