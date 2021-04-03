@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
+import {IAuthParams} from '../pages/HomePage'
 
 const StyledButton = styled.button`
   font-size: medium;
@@ -36,13 +36,12 @@ const StyledFontAwesomeIcon = styled.i`
 const GitHubLoginURL = "https://github.com/login/oauth/authorize"
 
 const getGitHubParams = () => {
-  const newState = uuidv4();
-  localStorage.setItem('gitHubState', newState)
+  const authParams: IAuthParams = JSON.parse(localStorage.getItem('authParams') as string)
   return new URLSearchParams({
-    client_id: '8f300287d12718a77080',
+    client_id: authParams.clientId,
     redirect_uri: 'http://localhost:3000/auth',
-    scope: 'user',
-    state: newState
+    scope: authParams.scope,
+    state: authParams.state
   });
 }
 

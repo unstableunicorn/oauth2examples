@@ -1,19 +1,31 @@
 import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { IAuthParams } from './HomePage';
 
 
 interface IAuth {
   authorised: boolean;
   name: string;
+  alias: string;
   email: string;
-  company: string;
+  avatar: string;
 }
 
-// const CLIEndpoint = "http://localhost:21765";
-const CLIEndpoint = "https://jsonplaceholder.typicode.com/users/1";
+const AvatarStyle = styled.img`
+  position: relative;
+  width: 80px;
+  float: left ;
+`
+const Header2Style = styled.h2`
+  float: right;
+`
+
+const CLIEndpoint = "http://localhost:3001/oauth/callback";
 
 const callAuthEndpoint = async (code: string | null, state: string | null) => {
   // do this in the go app just an example here!
-  const response = await fetch(CLIEndpoint)
+  const response = await fetch(`${CLIEndpoint}?code=${code}`)
+  console.log("awaiting response")
   const data = await response.json()
   console.log("data: ")
   console.log(data)
@@ -22,7 +34,8 @@ const callAuthEndpoint = async (code: string | null, state: string | null) => {
     authorised: true,
     name: data.name,
     email: data.email,
-    company: data.company.name,
+    alias: data.login,
+    avatar: data.avatar_url
   }
   return authResponse;
 }
@@ -32,7 +45,7 @@ const AuthPage = () => {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
   const state = params.get('state');
-  const localState = localStorage.getItem('gitHubState');
+  const localState: IAuthParams = JSON.parse(localStorage.getItem('authParams') as string);
   const getDetailsList = () => {
     if (!auth) return
     return Object.entries(auth as IAuth).map(([key, val], i) => {
@@ -40,28 +53,33 @@ const AuthPage = () => {
       return <li key={i}><span>{key}: {val}</span></li>
     })
   }
-
+  // just a thing
   useEffect(() => {
     if (!auth?.name) {
       console.log("calling auth endpoint")
       callAuthEndpoint(code, state)
         .then(res => {
+          console.log("Got reponse:")
+          console.log(res)
           setAuth(res)
         })
     }
   })
 
   //TODO: If local states don't match throw auth error
-  console.log("Matches: " + (localState == state))
+  console.log("Matches: " + (localState.state == state))
 
   return (
     <div>
       <header className="App-header">
         {auth?.authorised &&
           <div>
-            <h2>
-              Hi {auth.name}, you are now Authorised!
-            </h2>
+            <div className="header">
+            <AvatarStyle src={auth.avatar} alt={auth.alias}/>
+            <Header2Style>
+              Hi {auth.name}, You are now Authorised!
+            </Header2Style>
+            </div>
               <h3>User Details: </h3>
               <ul>
                 {getDetailsList()}
